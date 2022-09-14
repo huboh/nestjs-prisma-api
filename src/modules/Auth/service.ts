@@ -47,7 +47,7 @@ export class AuthService {
 
   private async createUser(props: Partial<User>) {
     const uuid = createUuid();
-    const password = await hash(props.password);
+    const password = await this.hashPassword(props.password);
 
     return this.database.user.create({
       data: {
@@ -81,5 +81,13 @@ export class AuthService {
       expiresIn: "15m",
       secret: this.config.get("TOKEN_SECRET") // enviroment variables are cached
     });
+  }
+
+  public hashPassword(password: string) {
+    return hash(password);
+  }
+
+  public async comparePassword(password: string, hashPassword: string) {
+    return compare(password, hashPassword);
   }
 }
